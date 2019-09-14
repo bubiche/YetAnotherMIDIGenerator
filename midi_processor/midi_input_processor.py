@@ -8,7 +8,7 @@ from .note_numerize import NoteNumerizer
 
 
 # generate a pair of input - target list from MIDI file
-def midiToInputTargetPair(file_path, note_numerizer,
+def midi_to_input_target_pair(file_path, note_numerizer,
                           sampling_frequency=common_config.SAMPLING_FREQUENCY_PREPROCESS,
                           sliding_window_size=common_config.SLIDING_WINDOW_SIZE,
                           silent_char=common_config.SILENT_CHAR):
@@ -75,9 +75,25 @@ def midiToInputTargetPair(file_path, note_numerizer,
     return input_list, target_list
 
 
+def shuffle_data(data_size, shuffle_file_name=common_config.SHUFFLE_FILE_NAME, shuffle_dataset_key=common_config.SHUFFLE_HDF5_KEY, target_save_file_name=common_config.TARGET_FILE_NAME, target_dataset_key=common_config.TARGET_HDF5_KEY):
+    data_size_to_shuffle = data_size
+    if data_size < 0:
+        target_file = h5py.File(target_save_file_name, 'r')
+        target_dataset = target_file[target_dataset_key]
+        data_size_to_shuffle = target_dataset.shape[0]
+        target_file.close()
+
+    shuffle_file = h5py.File(shuffle_file_name, 'w')
+    shuffle_dataset = shuffle_file.create_dataset(shuffle_dataset_key, (data_size_to_shuffle,), dtype=np.int64)
+
+    shuffle_idx = np.random.permutation(data_size_to_shuffle)
+    shuffle_dataset = shuffle_idx
+    shuffle_file.close()
+
+
 # read all MIDI files in a folder, preprocess them into inputs and targets
 # save the result to hdf5 files
-def preprocessTrainingData(folder_path='midi_files',
+def preprocess_training_data(folder_path='midi_files',
                           input_save_file_name=common_config.INPUT_FILE_NAME, input_dataset_key=common_config.INPUT_HDF5_KEY,
                           target_save_file_name=common_config.TARGET_FILE_NAME, target_dataset_key=common_config.TARGET_HDF5_KEY,
                           numerizer_file_name=common_config.NOTE_AND_NUMBER_MAPPER_FILE_NAME,
@@ -97,7 +113,7 @@ def preprocessTrainingData(folder_path='midi_files',
                 if file_count % 10 == 0:
                     print('Processed {} file'.format(file_count))
                 file_path = os.path.join(root, file)
-                cur_input_list, cur_target_list = midiToInputTargetPair(file_path=file_path, note_numerizer=note_numerizer)
+                cur_input_list, cur_target_list = midi_to_input_target_pair(file_path=file_path, note_numerizer=note_numerizer)
                 input_list.extend(cur_input_list)
                 target_list.extend(cur_target_list)
 
@@ -120,3 +136,6 @@ def preprocessTrainingData(folder_path='midi_files',
 
     input_file.close()
     target_file.close()
+
+    print('Shuffling data')
+    shuffle_data(data_size=data_size)
