@@ -102,3 +102,13 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# MIDI files
+*.mid
+*.midi
+
+# pickle file
+*.pickle
+
+# generated hdf5
+*.hdf5
