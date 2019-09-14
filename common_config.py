@@ -12,10 +12,10 @@ INPUT_FILE_NAME = 'input.hdf5'
 INPUT_HDF5_KEY = 'input'
 TARGET_FILE_NAME = 'target.hdf5'
 TARGET_HDF5_KEY = 'target'
-SHUFFLE_FILE_NAME = 'shuffle.hdf5'
-SHUFFLE_HDF5_KEY = 'shuffle'
 
 NOTE_AND_NUMBER_MAPPER_FILE_NAME = 'number_by_note_string.pickle'
+
 # batch size == how many x - y pair will be processed in each batch
 # preferably to be a power of 2
 BATCH_SIZE = 16
+EPOCH_COUNT = 8
