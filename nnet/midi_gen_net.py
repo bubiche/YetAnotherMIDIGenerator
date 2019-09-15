@@ -18,8 +18,9 @@ class NBatchLogger(tf.keras.callbacks.Callback):
 
     def on_batch_end(self, batch, logs={}):
         self.seen += logs.get('size', 0)
-        if (self.seen / self._batch_size) % self._n_batch == 0:
-            print('\n{}/{} Batches'.format(self.seen, self._total_batch))
+        seen_batch = self.seen / self._batch_size
+        if seen_batch % self._n_batch == 0:
+            print('\n{}/{} Batches'.format(seen_batch, self._total_batch))
 
 
 class MIDINet(object):
@@ -74,7 +75,7 @@ class MIDINet(object):
             checkpoint_path, verbose=1, save_weights_only=True
         )
         steps_per_epoch = self._batch_yielder.n_train // self._batch_size
-        n_batch_callback = NBatchLogger(total_batch=steps_per_epoch, n_batch=50, batch_size=self._batch_size)
+        n_batch_callback = NBatchLogger(total_batch=steps_per_epoch, n_batch=10, batch_size=self._batch_size)
         self._model.fit_generator(self._batch_yielder.next_batch(), epochs=self._epoch_count, callbacks=[checkpoint_callback, n_batch_callback], steps_per_epoch=steps_per_epoch, verbose=2)
         print('Saving final weights')
         self.save_weights()
