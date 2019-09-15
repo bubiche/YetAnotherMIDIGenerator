@@ -44,15 +44,15 @@ class MIDINet(object):
 
     def build_model(self):
         inputs = tf.keras.layers.Input(shape=(self._sliding_window_size,))
-        # self._unique_notes_count + 1 because the first note is 1 not 0, 128 is chosen because there were 128 notes in pretty_midi output
+        # self._unique_notes_count + 1 because the first note is 1 not 0
         embedding = tf.keras.layers.Embedding(self._unique_notes_count + 1, output_dim=64, input_length=self._sliding_window_size)(inputs)
 
         dense1 = tf.keras.layers.Dense(128)(embedding)
         leaky_relu = tf.keras.layers.LeakyReLU()(dense1)
-        gru = tf.keras.layers.Bidirectional(tf.keras.layers.GRU(128, recurrent_dropout=0.2))(leaky_relu)
+        gru = tf.keras.layers.Bidirectional(tf.keras.layers.GRU(128, recurrent_dropout=0.3))(leaky_relu)
 
         drop_out = tf.keras.layers.Dropout(0.4)(gru)
-        dense2 = tf.keras.layers.Dense(512, activation=swish)(drop_out)
+        dense2 = tf.keras.layers.Dense(256, activation=swish)(drop_out)
         # soft max help make values go closer to upper/lower bound
         outputs = tf.keras.layers.Dense(self._unique_notes_count + 1, activation='softmax')(dense2)
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
@@ -75,7 +75,7 @@ class MIDINet(object):
             checkpoint_path, verbose=1, save_weights_only=True
         )
         steps_per_epoch = self._batch_yielder.n_train // self._batch_size
-        n_batch_callback = NBatchLogger(total_batch=steps_per_epoch, n_batch=10, batch_size=self._batch_size)
+        n_batch_callback = NBatchLogger(total_batch=steps_per_epoch, n_batch=100, batch_size=self._batch_size)
         self._model.fit_generator(self._batch_yielder.next_batch(), epochs=self._epoch_count, callbacks=[checkpoint_callback, n_batch_callback], steps_per_epoch=steps_per_epoch, verbose=2)
         print('Saving final weights')
         self.save_weights()
