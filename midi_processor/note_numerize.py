@@ -1,4 +1,5 @@
 import pickle
+import common_config
 
 
 class NoteNumerizer(object):
@@ -15,11 +16,11 @@ class NoteNumerizer(object):
         self.number_by_note_string[note_string] = self.note_string_count
         self.note_string_by_number[self.note_string_count] = note_string
 
-    def save_to_pickle(self, save_file_name='number_by_note_string.pickle'):
+    def save_to_pickle(self, save_file_name=common_config.NOTE_AND_NUMBER_MAPPER_FILE_NAME):
         with open(save_file_name, 'wb') as save_file:
             pickle.dump(self.number_by_note_string, save_file)
 
-    def load_from_pickle(self, load_file_name='number_by_note_string.pickle'):
+    def load_from_pickle(self, load_file_name=common_config.NOTE_AND_NUMBER_MAPPER_FILE_NAME):
         with open(load_file_name, 'rb') as load_file:
             self.number_by_note_string = pickle.load(load_file)
             for note_string, number in self.number_by_note_string.items():

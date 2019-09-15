@@ -65,10 +65,11 @@ def midi_to_input_target_pair(file_path, note_numerizer,
                 cur_input.append(note_numerizer.number_by_note_string[silent_char])
 
         # create target from next window at time_idx + 1
+        # target is a 1x1 tensor
         if (time_idx + 1) in notes_by_time:
-            cur_target = notes_by_time[time_idx + 1]
+            cur_target = [notes_by_time[time_idx + 1]]
         else:
-            cur_target = note_numerizer.number_by_note_string[silent_char]
+            cur_target = [note_numerizer.number_by_note_string[silent_char]]
         input_list.append(cur_input)
         target_list.append(cur_target)
 
@@ -86,9 +87,14 @@ def preprocess_training_data(folder_path='midi_files',
     note_numerizer = NoteNumerizer()
     note_numerizer.add_note_string(silent_char)
 
-    input_list = []
-    target_list = []
+    max_dataset_size = 65536
+    input_file = h5py.File(input_save_file_name, 'w')
+    target_file = h5py.File(target_save_file_name, 'w')
+    input_dataset = input_file.create_dataset(input_dataset_key, (max_dataset_size, sliding_window_size), maxshape=(None, sliding_window_size), dtype='f')
+    target_dataset = target_file.create_dataset(target_dataset_key, (max_dataset_size, 1), maxshape=(None, 1), dtype='f')
+
     file_count = 0
+    input_target_pair_count = 0
     print('Reading MIDI files')
     for root, dirs, files in os.walk(folder_path):
         for file in files:
@@ -98,25 +104,22 @@ def preprocess_training_data(folder_path='midi_files',
                     print('Processed {} file'.format(file_count))
                 file_path = os.path.join(root, file)
                 cur_input_list, cur_target_list = midi_to_input_target_pair(file_path=file_path, note_numerizer=note_numerizer)
-                input_list.extend(cur_input_list)
-                target_list.extend(cur_target_list)
+                for input_value, target_value in zip(cur_input_list, cur_target_list):
+                    input_dataset[input_target_pair_count] = input_value
+                    target_dataset[input_target_pair_count] = target_value
+                    input_target_pair_count += 1
+
+                    # increase capacity of datasets when almost full
+                    if input_target_pair_count >= max_dataset_size * 0.9:
+                        max_dataset_size *= 2
+                        input_dataset.resize((max_dataset_size, sliding_window_size))
+                        target_dataset.resize((max_dataset_size, 1))
+
+    input_dataset.resize((input_target_pair_count, sliding_window_size))
+    target_dataset.resize((input_target_pair_count, 1))
 
     print('Saving note - number map')
     note_numerizer.save_to_pickle(save_file_name=numerizer_file_name)
-
-    print('Saving hdf5 files')
-    data_size = len(input_list)
-    input_file = h5py.File(input_save_file_name, 'w')
-    target_file = h5py.File(target_save_file_name, 'w')
-
-    input_dataset = input_file.create_dataset(input_dataset_key, (data_size, sliding_window_size), dtype='f')
-    target_dataset = target_file.create_dataset(target_dataset_key, (data_size,), dtype='f')
-
-    for i in range(data_size):
-        if i % 1000 == 0:
-            print('Saved {} pairs'.format(i + 1))
-        input_dataset[i] = input_list[i]
-        target_dataset[i] = target_list[i]
 
     input_file.close()
     target_file.close()
