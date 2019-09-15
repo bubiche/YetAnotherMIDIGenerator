@@ -75,7 +75,7 @@ class MIDINet(object):
             checkpoint_path, verbose=1, save_weights_only=True
         )
         steps_per_epoch = self._batch_yielder.n_train // self._batch_size
-        n_batch_callback = NBatchLogger(total_batch=steps_per_epoch, n_batch=100, batch_size=self._batch_size)
+        n_batch_callback = NBatchLogger(total_batch=steps_per_epoch, n_batch=10, batch_size=self._batch_size)
         self._model.fit_generator(self._batch_yielder.next_batch(), epochs=self._epoch_count, callbacks=[checkpoint_callback, n_batch_callback], steps_per_epoch=steps_per_epoch, verbose=2)
         print('Saving final weights')
         self.save_weights()
