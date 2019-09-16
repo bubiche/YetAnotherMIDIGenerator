@@ -20,7 +20,7 @@ class NBatchLogger(tf.keras.callbacks.Callback):
         self.seen += logs.get('size', 0)
         seen_batch = self.seen / self._batch_size
         if seen_batch % self._n_batch == 0:
-            print('\n{}/{} Batches'.format(seen_batch, self._total_batch))
+            print('\n{}/{} Batches - loss: {}'.format(seen_batch, self._total_batch, logs.get('loss')))
 
 
 class MIDINet(object):
@@ -69,7 +69,7 @@ class MIDINet(object):
 
     def train(self):
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
-        checkpoint_path = '{}/cp-{}-nc{}-sw{}-'.format(common_config.CHECKPOINT_FOLDER, timestamp, self._unique_notes_count, self._sliding_window_size) + '-{epoch:04d}.ckpt'
+        checkpoint_path = '{}/cp-{}-nc{}-sw{}-'.format(common_config.CHECKPOINT_FOLDER, timestamp, self._unique_notes_count, self._sliding_window_size) + '-{epoch:04d}.hdf5'
         checkpoint_dir = os.path.dirname(checkpoint_path)
         checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
             checkpoint_path, verbose=1, save_weights_only=True

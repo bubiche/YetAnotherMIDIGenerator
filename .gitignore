@@ -110,9 +110,6 @@ venv.bak/
 # pickle file
 *.pickle
 
-# generated hdf5
+# generated hdf5 + training checkpoints and weights
 *.hdf5
-
-# training checkpoints and weights
-*.ckpt
 *.h5
