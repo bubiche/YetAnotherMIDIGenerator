@@ -61,14 +61,14 @@ class MIDINet(object):
         return model
 
     def save_weights(self, save_folder=common_config.FINAL_WEIGHT_FOLDER):
-        timestamp = datetime.datetime.now().strftime('%Y/%m/%d_%H:%M:%S')
-        self._model.save_weights('./{}/{}-nc{}-sw{}.weights'.format(save_folder, timestamp, self._unique_notes_count, self._sliding_window_size))
+        timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+        self._model.save_weights('./{}/{}-nc{}-sw{}.h5'.format(save_folder, timestamp, self._unique_notes_count, self._sliding_window_size))
 
     def load_weights(self, load_path):
         self._model.load_weights(load_path)
 
     def train(self):
-        timestamp = datetime.datetime.now().strftime('%Y/%m/%d_%H:%M:%S')
+        timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
         checkpoint_path = '{}/cp-{}-nc{}-sw{}-'.format(common_config.CHECKPOINT_FOLDER, timestamp, self._unique_notes_count, self._sliding_window_size) + '-{epoch:04d}.ckpt'
         checkpoint_dir = os.path.dirname(checkpoint_path)
         checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(

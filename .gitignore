@@ -115,4 +115,4 @@ venv.bak/
 
 # training checkpoints and weights
 *.ckpt
-*.weights
+*.h5
