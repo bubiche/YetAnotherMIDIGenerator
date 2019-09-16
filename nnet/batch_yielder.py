@@ -35,6 +35,7 @@ class BatchYielder(object):
 
     def next_batch(self):
         b = 0
+        self.shuffle_data()
         while True:
             # yield these
             x_batch = []
@@ -50,6 +51,8 @@ class BatchYielder(object):
                 y_batch.append(y_instance)
 
             b += 1
+            # end of current epoch
             if b >= self.batch_per_epoch:
+                b = 0
                 self.shuffle_data()
             yield np.array(x_batch), np.array(y_batch)
