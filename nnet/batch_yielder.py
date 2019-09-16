@@ -34,20 +34,22 @@ class BatchYielder(object):
         return self.target_dataset[idx]
 
     def next_batch(self):
+        b = 0
         while True:
-            self.shuffle_data()
-            for b in range(self.batch_per_epoch):
-                # yield these
-                x_batch = []
-                y_batch = []
+            # yield these
+            x_batch = []
+            y_batch = []
 
-                for j in range(b * self._batch_size, b * self._batch_size + self._batch_size):
-                    if j >= self.n_train:
-                        continue
-                    x_instance = self.get_input_at_index(self.shuffle_idx[j])
-                    y_instance = self.get_target_at_index(self.shuffle_idx[j])
+            for j in range(b * self._batch_size, b * self._batch_size + self._batch_size):
+                if j >= self.n_train:
+                    continue
+                x_instance = self.get_input_at_index(self.shuffle_idx[j])
+                y_instance = self.get_target_at_index(self.shuffle_idx[j])
 
-                    x_batch.append(x_instance)
-                    y_batch.append(y_instance)
+                x_batch.append(x_instance)
+                y_batch.append(y_instance)
 
-                yield np.array(x_batch), np.array(y_batch)
+            b += 1
+            if b >= self.batch_per_epoch:
+                self.shuffle_data()
+            yield np.array(x_batch), np.array(y_batch)
