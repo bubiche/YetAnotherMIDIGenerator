@@ -47,11 +47,11 @@ class MIDINet(object):
     def build_model(self):
         inputs = tf.keras.layers.Input(shape=(self._sliding_window_size,))
 
-        dense1 = tf.keras.layers.Dense(128)(inputs)
+        dense1 = tf.keras.layers.Dense(64)(inputs)
         leaky_relu = tf.keras.layers.LeakyReLU()(dense1)
-        reshape = tf.keras.layers.Reshape((128, 1))(leaky_relu)
+        reshape = tf.keras.layers.Reshape((64, 1))(leaky_relu)
         gru = tf.keras.layers.Bidirectional(
-            tf.keras.layers.GRU(128, recurrent_dropout=0.2, return_sequences=True)
+            tf.keras.layers.GRU(64, recurrent_dropout=0.3, return_sequences=True)
         )(reshape)
 
         dense2 = tf.keras.layers.Dense(256, activation=swish)(gru)
