@@ -20,7 +20,7 @@ class NBatchLogger(tf.keras.callbacks.Callback):
     def on_batch_end(self, batch, logs={}):
         self.seen += logs.get('size', 0)
         seen_batch = self.seen / self._batch_size
-        if seen_batch >= total_batch:
+        if seen_batch >= self._total_batch:
             self.seen = logs.get('size', 0)
             seen_batch = self.seen / self._batch_size
         if seen_batch % self._n_batch == 0:
