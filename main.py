@@ -50,7 +50,6 @@ if __name__ == '__main__':
         print('Start training')
         midi_net.train()
     elif args.generate_random or args.generate_from_seed:
-        print(args.generate_random[0], args.generate_random[1])
         note_numerizer = midi_processor.NoteNumerizer()
         note_numerizer.load_from_pickle()
         unique_notes_count = note_numerizer.note_string_count
