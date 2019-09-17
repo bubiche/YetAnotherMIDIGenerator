@@ -50,9 +50,7 @@ class MIDINet(object):
         dense1 = tf.keras.layers.Dense(64)(inputs)
         leaky_relu = tf.keras.layers.LeakyReLU()(dense1)
         reshape = tf.keras.layers.Reshape((64, 1))(leaky_relu)
-        gru = tf.keras.layers.Bidirectional(
-            tf.keras.layers.GRU(64, recurrent_dropout=0.3, return_sequences=True)
-        )(reshape)
+        gru = tf.keras.layers.Bidirectional(tf.keras.layers.GRU(64, recurrent_dropout=0.3))(reshape)
 
         dense2 = tf.keras.layers.Dense(256, activation=swish)(gru)
         drop_out = tf.keras.layers.Dropout(0.2)(dense2)
