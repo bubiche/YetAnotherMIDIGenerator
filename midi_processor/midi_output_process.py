@@ -8,7 +8,8 @@ def output_midi_file_from_note_list(note_list,
                                     start_idx=common_config.SLIDING_WINDOW_SIZE - 2, # start from the last note of the seed
                                     n_note_generate=common_config.N_NOTE_GENERATE):
     note_string_list = [note_numerizer.note_string_by_number[num] for num in note_list]
-    piano_roll = np.zeros((128, n_note_generate + 1), dtype=np.int8)
+    # 0 at the start + last note of the seed + n_note_generate generated notes
+    piano_roll = np.zeros((128, n_note_generate + 2), dtype=np.int8)
 
     # create the piano roll
     print('Create the piano roll')

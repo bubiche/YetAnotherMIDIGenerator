@@ -68,6 +68,8 @@ if __name__ == '__main__':
 
         print('Loading weights')
         midi_net.load_weights(weights_file_path)
+
+        print('Generating notes')
         note_list = first_input
         for i in range(common_config.N_NOTE_GENERATE):
             # input of the network is (None, window_size)
