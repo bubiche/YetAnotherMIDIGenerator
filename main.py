@@ -22,8 +22,8 @@ if __name__ == '__main__':
     args_group.add_argument('--clean', help='clean preprocessed data', action='store_true')
     args_group.add_argument('-t', '--train', help='train the model', action='store_true')
     args_group.add_argument('--train_from_ckpt', help='train the model starting from the checkpoint specified in path')
-    args_group.add_argument('--generate_random', help='generate random music from weights_file and output to output_file', nargs=2, metavar=('weight_files', 'output_file'))
-    args_group.add_argument('--generate_from_seed', help='generate music using seed_note from weights_file and output to output_file', nargs=3, metavar=('seed_note', 'weights_file', 'output_file'))
+    args_group.add_argument('--generate_random', help='generate random music from WEIGHTS_FILE and output to OUTPUT_FILE', nargs=2, metavar=('WEIGHTS_FILE', 'OUTPUT_FILE'))
+    args_group.add_argument('--generate_from_seed', help='generate music using SEED_NOTE from WEIGHTS_FILE and output to OUTPUT_FILE', nargs=3, metavar=('SEED_NOTE', 'WEIGHTS_FILE', 'OUTPUT_FILE'))
 
     args = parser.parse_args()
     if args.preprocess_folder:
