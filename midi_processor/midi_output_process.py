@@ -38,7 +38,7 @@ def output_midi_file_from_note_list(note_list,
     print('Finalizing MIDI data')
     for time, note in zip(*velocity_changes):
         # use time + 1 because we did some padding above
-        velocity = piano_roll[note, time + 1]
+        velocity = piano_roll[note][time + 1]
         time = time / sampling_frequency
         if velocity > 0:
             if velocity_by_note[note] == 0:
@@ -55,10 +55,8 @@ def output_midi_file_from_note_list(note_list,
             velocity_by_note[note] = 0
     pretty_midi_obj.instruments.append(instrument)
 
-    estimated_tempo = int(pretty_midi_obj.estimate_tempo())
-    print('Estimated Tempo {}'.format(estimated_tempo))
     for note in pretty_midi_obj.instruments[0].notes:
-        note.velocity = estimated_tempo
+        note.velocity = 90
 
     # write to file
     pretty_midi_obj.write(output_file_path)
