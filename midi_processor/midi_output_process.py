@@ -11,6 +11,7 @@ def output_midi_file_from_note_list(note_list,
     piano_roll = np.zeros((128, n_note_generate + 1), dtype=np.int8)
 
     # create the piano roll
+    print('Create the piano roll')
     for time_idx, note_string in enumerate(note_string_list[start_idx:]):
         if note_string == common_config.SILENT_CHAR:
             continue
@@ -32,6 +33,7 @@ def output_midi_file_from_note_list(note_list,
     velocity_by_note = np.zeros(n_notes, dtype=int)
     start_time_by_note = np.zeros(n_notes)
 
+    print('Finalizing MIDI data')
     for time, note in zip(*velocity_changes):
         # use time + 1 because we did some padding above
         velocity = piano_roll[note, time + 1]
@@ -52,6 +54,7 @@ def output_midi_file_from_note_list(note_list,
     pretty_midi_obj.instruments.append(instrument)
 
     estimated_tempo = int(pretty_midi_obj.estimate_tempo())
+    print('Estimated Tempo {}'.format(estimated_tempo))
     for note in pretty_midi_obj.instruments[0].notes:
         note.velocity = estimated_tempo
 
