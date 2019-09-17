@@ -51,7 +51,7 @@ def output_midi_file_from_note_list(note_list,
             velocity_by_note[note] = 0
     pretty_midi_obj.instruments.append(instrument)
 
-    estimated_tempo = pretty_midi_obj.estimate_tempo()
+    estimated_tempo = int(pretty_midi_obj.estimate_tempo())
     for note in pretty_midi_obj.instruments[0].notes:
         note.velocity = estimated_tempo
 
