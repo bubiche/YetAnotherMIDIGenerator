@@ -1,6 +1,7 @@
 import os
 import datetime
 import tensorflow as tf
+import numpy as np
 
 import common_config
 from .batch_yielder import BatchYielder
@@ -19,6 +20,9 @@ class NBatchLogger(tf.keras.callbacks.Callback):
     def on_batch_end(self, batch, logs={}):
         self.seen += logs.get('size', 0)
         seen_batch = self.seen / self._batch_size
+        if seen_batch >= total_batch:
+            self.seen = logs.get('size', 0)
+            seen_batch = self.seen / self._batch_size
         if seen_batch % self._n_batch == 0:
             print('\n{}/{} Batches - loss: {}'.format(seen_batch, self._total_batch, logs.get('loss')))
 
@@ -82,3 +86,8 @@ class MIDINet(object):
 
     def print_model_summary(self):
         print(self._model.summary())
+
+    # predict the next note
+    def predict(intput_notes):
+        # input_notes must be a numpy array with the shape of the net's input
+        return np.random.choice(self._unique_notes_count + 1, replace=False, p=self._model.predict(intput_notes)[0])

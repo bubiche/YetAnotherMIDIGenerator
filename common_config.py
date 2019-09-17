@@ -24,3 +24,7 @@ MODEL_NAME = 'midi_gen_net'
 
 CHECKPOINT_FOLDER = 'ckpt'
 FINAL_WEIGHT_FOLDER = 'weights'
+
+# how many notes to generate
+N_NOTE_GENERATE = 1000
+SAMPLING_FREQUENCY_OUTPUT = 10

@@ -1,6 +1,7 @@
 import argparse
 import os
 import pickle
+import numpy as np
 
 import midi_processor
 import common_config
@@ -21,6 +22,8 @@ if __name__ == '__main__':
     args_group.add_argument('--clean', help='clean preprocessed data', action='store_true')
     args_group.add_argument('-t', '--train', help='train the model', action='store_true')
     args_group.add_argument('--train_from_ckpt', help='train the model starting from the checkpoint specified in path')
+    args_group.add_argument('--generate_random', help='generate random music from weights_file and output to output_file', nargs=2, metavar=('weight_files', 'output_file'))
+    args_group.add_argument('--generate_from_seed', help='generate music using seed_note from weights_file and output to output_file', nargs=3, metavar=('seed_note', 'weights_file', 'output_file'))
 
     args = parser.parse_args()
     if args.preprocess_folder:
@@ -46,3 +49,27 @@ if __name__ == '__main__':
             midi_net.load_weights(args.train_from_ckpt)
         print('Start training')
         midi_net.train()
+    elif args.generate_random or args.generate_from_seed:
+        note_numerizer = midi_processor.NoteNumerizer()
+        note_numerizer.load_from_pickle()
+        unique_notes_count = note_numerizer.note_string_count
+        midi_net = nnet.MIDINet(unique_notes_count=unique_notes_count)
+        if args.generate_random:
+            first_input = np.random.randint(0, unique_notes_count, common_config.SLIDING_WINDOW_SIZE).tolist()
+            weights_file_path = args.generate_random[0]
+            output_file_path = args.generate_random[1]
+        elif args.generate_from_seed:
+            first_input = [note_numerizer.number_by_note_string[common_config.SILENT_CHAR] for i in range(common_config.SLIDING_WINDOW_SIZE)]
+            first_input.append(note_numerizer.number_by_note_string[args.generate_from_seed[0]])
+            weights_file_path = args.generate_from_seed[1]
+            output_file_path = args.generate_random[2]
+
+        midi_net.load_weights(weights_file_path)
+        note_list = first_input
+        for i in range(common_config.N_NOTE_GENERATE):
+            # input of the network is (None, window_size)
+            cur_input = np.array([note_list])[:, i:i + common_config.SLIDING_WINDOW_SIZE]
+            prediction = midi_net.predict(cur_input)
+            note_list.append(prediction)
+
+        midi_processor.output_midi_file_from_note_list(note_list, output_file_path, note_numerizer)

@@ -9,7 +9,7 @@ I want to build a music generator with a few constraints:
 - The process should be divided into different self-contained phases so I can run each phase whenever I feel like it
 
 Those constraints lead to these decisions:
-- The MIDI format: music can be (overly simplified) characterized by pitch, duration, and tone color. With MIDI, my model can focus on only pitch and duration (i.e. 1 less dimension to care about) => Simpler model
+- The MIDI format: music can be (overly simplified) characterized by pitch, duration, and tone color. With MIDI, my model can focus on only pitch and duration if I just focus on 1 channel - the piano channel (i.e. 1 less dimension to care about) => Simpler model
 - The model should be as simple as possible
 - Each note combination is mapped to a number, the output of the current X note combinations is the next note combination played in the MIDI => the numerical value is just a label, magnitude means nothing => model as a classification problem
 - Also, I was not being scientific and wanted to do this purely based on "feeling", hence no val/test set
