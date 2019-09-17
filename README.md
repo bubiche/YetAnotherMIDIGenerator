@@ -40,3 +40,5 @@ Total params: 67,117,170
 Trainable params: 67,117,170
 Non-trainable params: 0
 ```
+
+The use of `pretty_midi` to generate output is heavily influenced by https://gist.github.com/haryoa/a3b969109592fafd370ddf377b4ea0e4#file-gist-py
