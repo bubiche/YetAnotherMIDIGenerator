@@ -3,7 +3,7 @@ SILENT_CHAR = 's'
 # sampling frequency for pretty_midi
 # from their document: http://craffel.github.io/pretty-midi/#pretty_midi.PrettyMIDI.get_piano_roll
 # "Sampling frequency of the columns, i.e. each column is spaced apart by 1./fs seconds"
-SAMPLING_FREQUENCY_PREPROCESS = 30
+SAMPLING_FREQUENCY_PREPROCESS = 4
 
 # size of each input instance (x)
 SLIDING_WINDOW_SIZE = 40

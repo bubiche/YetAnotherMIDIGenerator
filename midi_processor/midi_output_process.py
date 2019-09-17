@@ -59,4 +59,5 @@ def output_midi_file_from_note_list(note_list,
         note.velocity = 100
 
     # write to file
+    print('Writing to file')
     pretty_midi_obj.write(output_file_path)

@@ -18,13 +18,11 @@ class NBatchLogger(tf.keras.callbacks.Callback):
         self._batch_size = batch_size
 
     def on_batch_end(self, batch, logs={}):
-        self.seen += logs.get('size', 0)
-        seen_batch = self.seen / self._batch_size
-        if seen_batch >= self._total_batch:
-            self.seen = logs.get('size', 0)
-            seen_batch = self.seen / self._batch_size
-        if seen_batch % self._n_batch == 0:
-            print('\n{}/{} Batches - loss: {}'.format(seen_batch, self._total_batch, logs.get('loss')))
+        self.seen += 1
+        if  self.seen >= self._total_batch:
+            self.seen = 1
+        if  self.seen % self._n_batch == 0:
+            print('\n{}/{} Batches - loss: {}'.format(self.seen, self._total_batch, logs.get('loss')))
 
 
 class MIDINet(object):
@@ -48,17 +46,15 @@ class MIDINet(object):
 
     def build_model(self):
         inputs = tf.keras.layers.Input(shape=(self._sliding_window_size,))
-        # self._unique_notes_count + 1 because the first note is 1 not 0
-        embedding = tf.keras.layers.Embedding(self._unique_notes_count + 1, output_dim=64, input_length=self._sliding_window_size)(inputs)
 
-        dense1 = tf.keras.layers.Dense(128)(embedding)
+        dense1 = tf.keras.layers.Dense(64)(inputs)
         leaky_relu = tf.keras.layers.LeakyReLU()(dense1)
-        gru = tf.keras.layers.Bidirectional(tf.keras.layers.GRU(128, recurrent_dropout=0.3))(leaky_relu)
+        gru = tf.keras.layers.Bidirectional(tf.keras.layers.GRU(64, recurrent_dropout=0.2, return_sequences=True))(leaky_relu)
 
-        drop_out = tf.keras.layers.Dropout(0.4)(gru)
-        dense2 = tf.keras.layers.Dense(256, activation=swish)(drop_out)
+        dense2 = tf.keras.layers.Dense(256, activation=swish)(gru)
+        drop_out = tf.keras.layers.Dropout(0.2)(dense2)
         # soft max help make values go closer to upper/lower bound
-        outputs = tf.keras.layers.Dense(self._unique_notes_count + 1, activation='softmax')(dense2)
+        outputs = tf.keras.layers.Dense(self._unique_notes_count + 1, activation='softmax')(drop_out)
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
 
         model.compile(optimizer=tf.keras.optimizers.RMSprop(), loss='sparse_categorical_crossentropy')
