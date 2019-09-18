@@ -59,17 +59,12 @@ def midi_to_input_target_pair(file_path, note_numerizer,
 
         for i in range(start_idx, sliding_window_size):
             cur_time = time_idx - (sliding_window_size - i - 1)
-            if cur_time in notes_by_time:
-                cur_input.append(notes_by_time[cur_time])
-            else:
-                cur_input.append(note_numerizer.number_by_note_string[silent_char])
+            cur_input.append(notes_by_time.get(cur_time, note_numerizer.number_by_note_string[silent_char]))
 
         # create target from next window at time_idx + 1
         # target is a 1x1 tensor
-        if (time_idx + 1) in notes_by_time:
-            cur_target = [notes_by_time[time_idx + 1]]
-        else:
-            cur_target = [note_numerizer.number_by_note_string[silent_char]]
+        cur_target = [notes_by_time.get(time_idx + 1, note_numerizer.number_by_note_string[silent_char])]
+
         input_list.append(cur_input)
         target_list.append(cur_target)
 
