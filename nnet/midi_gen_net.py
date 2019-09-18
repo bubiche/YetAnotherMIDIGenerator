@@ -58,7 +58,7 @@ class MIDINet(object):
         outputs = tf.keras.layers.Dense(self._unique_notes_count + 1, activation='softmax')(drop_out)
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
 
-        model.compile(optimizer=tf.keras.optimizers.RMSprop(), loss='sparse_categorical_crossentropy')
+        model.compile(optimizer=tf.keras.optimizers.Adam(), loss='sparse_categorical_crossentropy')
         return model
 
     def save_weights(self, save_folder=common_config.FINAL_WEIGHT_FOLDER):

@@ -18,7 +18,7 @@ NOTE_AND_NUMBER_MAPPER_FILE_NAME = 'number_by_note_string.pickle'
 # batch size == how many x - y pair will be processed in each batch
 # preferably to be a power of 2
 BATCH_SIZE = 1024
-EPOCH_COUNT = 4
+EPOCH_COUNT = 10
 
 MODEL_NAME = 'midi_gen_net'
 
