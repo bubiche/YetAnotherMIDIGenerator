@@ -47,12 +47,14 @@ class MIDINet(object):
     def build_model(self):
         inputs = tf.keras.layers.Input(shape=(self._sliding_window_size,))
 
-        dense1 = tf.keras.layers.Dense(64)(inputs)
-        leaky_relu = tf.keras.layers.LeakyReLU()(dense1)
-        reshape = tf.keras.layers.Reshape((64, 1))(leaky_relu)
-        gru = tf.keras.layers.Bidirectional(tf.keras.layers.GRU(64, recurrent_dropout=0.3))(reshape)
+        reshape = tf.keras.layers.Reshape((self._sliding_window_size, 1))(inputs)
+        conv1d = tf.keras.layers.Conv1D(64, kernel_size=4, activation='hard_sigmoid')(reshape)
+        flatten = tf.keras.layers.Flatten()(conv1d)
 
-        dense2 = tf.keras.layers.Dense(256, activation=swish)(gru)
+        dense1 = tf.keras.layers.Dense(128)(flatten)
+        leaky_relu = tf.keras.layers.LeakyReLU()(dense1)
+
+        dense2 = tf.keras.layers.Dense(256, activation=swish)(leaky_relu)
         drop_out = tf.keras.layers.Dropout(0.2)(dense2)
         # soft max help make values go closer to upper/lower bound
         outputs = tf.keras.layers.Dense(self._unique_notes_count + 1, activation='softmax')(drop_out)

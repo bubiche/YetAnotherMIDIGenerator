@@ -18,27 +18,30 @@ Those constraints lead to these decisions:
 For 208242 different note combinations
 ```
 _________________________________________________________________
-Layer (type)                 Output Shape              Param #   
+Layer (type)                 Output Shape              Param #
 =================================================================
-input_1 (InputLayer)         [(None, 40)]              0         
+input_1 (InputLayer)         [(None, 40)]              0
 _________________________________________________________________
-embedding_1 (Embedding)      (None, 40, 64)            13327488  
+reshape (Reshape)            (None, 40, 1)             0
 _________________________________________________________________
-dense_3 (Dense)              (None, 40, 128)           8320      
+conv1d (Conv1D)              (None, 37, 64)            320
 _________________________________________________________________
-leaky_re_lu_1 (LeakyReLU)    (None, 40, 128)           0         
+flatten (Flatten)            (None, 2368)              0
 _________________________________________________________________
-bidirectional_1 (Bidirection (None, 256)               197376    
+dense (Dense)                (None, 128)               303232
 _________________________________________________________________
-dropout_1 (Dropout)          (None, 256)               0         
+leaky_re_lu (LeakyReLU)      (None, 128)               0
 _________________________________________________________________
-dense_4 (Dense)              (None, 256)               65792     
+dense_1 (Dense)              (None, 256)               33024
 _________________________________________________________________
-dense_5 (Dense)              (None, 208242)            53518194  
+dropout (Dropout)            (None, 256)               0
+_________________________________________________________________
+dense_2 (Dense)              (None, 123646)            31777022
 =================================================================
-Total params: 67,117,170
-Trainable params: 67,117,170
+Total params: 32,113,598
+Trainable params: 32,113,598
 Non-trainable params: 0
+_________________________________________________________________
 ```
 
 The use of `pretty_midi` to generate output is heavily influenced by https://gist.github.com/haryoa/a3b969109592fafd370ddf377b4ea0e4#file-gist-py
