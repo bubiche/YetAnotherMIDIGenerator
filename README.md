@@ -45,3 +45,23 @@ _________________________________________________________________
 ```
 
 The use of `pretty_midi` to generate output is heavily influenced by https://gist.github.com/haryoa/a3b969109592fafd370ddf377b4ea0e4#file-gist-py
+
+## How to use
+```
+# Install dependencies
+pip install -r requirements.txt
+
+# Put midi files in the folder "midi_files"
+# Preprocess them
+python main.py -p midi_files
+
+# Train the net
+python main.py -t
+
+# Weight files will be generated in the folders "ckpt" and "weights"
+# Use any of them to generate midi music, e.g.
+python main.py --generate_random path/to/weights.h5 out.mid
+```
+
+## Tweak it
+The code for constructing the net is in nnet/midi_gen_net.py, modify the "build_model" function and do the same process for training your own neural network/generating new midi
