@@ -61,10 +61,10 @@ if __name__ == '__main__':
             output_file_path = args.generate_random[1]
         elif args.generate_from_seed:
             print('Generate music from seed # {}'.format(args.generate_from_seed[0]))
-            first_input = [note_numerizer.number_by_note_string[common_config.SILENT_CHAR] for i in range(common_config.SLIDING_WINDOW_SIZE)]
+            first_input = [note_numerizer.number_by_note_string[common_config.SILENT_CHAR] for i in range(common_config.SLIDING_WINDOW_SIZE - 1)]
             first_input.append(note_numerizer.number_by_note_string[args.generate_from_seed[0]])
             weights_file_path = args.generate_from_seed[1]
-            output_file_path = args.generate_random[2]
+            output_file_path = args.generate_from_seed[2]
 
         print('Loading weights')
         midi_net.load_weights(weights_file_path)

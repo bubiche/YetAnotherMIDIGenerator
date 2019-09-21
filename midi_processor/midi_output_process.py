@@ -56,7 +56,8 @@ def output_midi_file_from_note_list(note_list,
     pretty_midi_obj.instruments.append(instrument)
 
     for note in pretty_midi_obj.instruments[0].notes:
-        note.velocity = 100
+        # mezzo-forte
+        note.velocity = 64
 
     # write to file
     print('Writing to file')
