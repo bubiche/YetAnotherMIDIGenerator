@@ -15,7 +15,7 @@ Those constraints lead to these decisions:
 - Also, I was not being scientific and wanted to do this purely based on "feeling", hence no val/test set
 
 ## Model Summary
-For 208242 different note combinations
+For 123645 different note combinations
 ```
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #
