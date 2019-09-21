@@ -65,3 +65,9 @@ python main.py --generate_random path/to/weights.h5 out.mid
 
 ## Tweak it
 The code for constructing the net is in nnet/midi_gen_net.py, modify the "build_model" function and do the same process for training your own neural network/generating new midi
+
+## Results
+Weight files of the net trained using some of my favorite music
+5 Epoch: https://drive.google.com/file/d/1FS0dxgMAG6jDtfW7wsP9gImcToJkbkA_/view?usp=sharing
+10 Epoch: https://drive.google.com/file/d/16cFz4SCkMhvBGZ2A7HclHMTu7TJ9Ct2P/view?usp=sharing
+Generated MIDI, not that good :( : https://drive.google.com/file/d/1cQpwj40JoyYnXpmczchnxkXnVrLjyKyc/view?usp=sharing
