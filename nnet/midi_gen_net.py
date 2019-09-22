@@ -87,6 +87,6 @@ class MIDINet(object):
         print(self._model.summary())
 
     # predict the next note
-    def predict(self, intput_notes):
+    def predict(self, input_notes):
         # input_notes must be a numpy array with the shape of the net's input
-        return np.random.choice(self._unique_notes_count + 1, replace=False, p=self._model.predict(intput_notes)[0])
+        return np.random.choice(self._unique_notes_count + 1, replace=False, p=self._model.predict(input_notes)[0])
