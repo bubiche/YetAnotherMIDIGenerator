@@ -1,26 +1,27 @@
 import numpy as np
 import pretty_midi
+
 import common_config
+from .note_normalize import normalize_note
 
 
 def output_midi_file_from_note_list(note_list,
-                                    output_file_path, note_numerizer,
+                                    output_file_path,
                                     sampling_frequency=common_config.SAMPLING_FREQUENCY_OUTPUT,
                                     start_idx=common_config.SLIDING_WINDOW_SIZE - 2, # start from the last note of the seed
                                     n_note_generate=common_config.N_NOTE_GENERATE):
-    note_string_list = [note_numerizer.note_string_by_number[num] for num in note_list]
+
     # 0 at the start + last note of the seed + n_note_generate generated notes
     piano_roll = np.zeros((128, n_note_generate + 2), dtype=np.int8)
 
     # create the piano roll
     print('Create the piano roll')
-    for time_idx, note_string in enumerate(note_string_list[start_idx:]):
-        if note_string == common_config.SILENT_CHAR:
+    for time_idx, note in enumerate(note_list[start_idx:]):
+        normalized_note = normalize_note(note)
+        if normalized_note == common_config.SILENT_NOTE:
             continue
 
-        splitted_note = note_string.split(',')
-        for i in splitted_note:
-            piano_roll[int(i)][time_idx] = 1
+        piano_roll[normalized_note][time_idx] = 1
 
     # create pretty_midi object from piano roll
     n_notes, n_time_frames = piano_roll.shape

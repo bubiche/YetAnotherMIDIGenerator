@@ -1,4 +1,9 @@
-SILENT_CHAR = 's'
+SILENT_NOTE = 0
+
+# A0
+MIN_NOTE = 21
+# C8
+MAX_NOTE = 108
 
 # sampling frequency for pretty_midi
 # from their document: http://craffel.github.io/pretty-midi/#pretty_midi.PrettyMIDI.get_piano_roll
@@ -12,8 +17,6 @@ INPUT_FILE_NAME = 'input.hdf5'
 INPUT_HDF5_KEY = 'input'
 TARGET_FILE_NAME = 'target.hdf5'
 TARGET_HDF5_KEY = 'target'
-
-NOTE_AND_NUMBER_MAPPER_FILE_NAME = 'number_by_note_string.pickle'
 
 # batch size == how many x - y pair will be processed in each batch
 # preferably to be a power of 2

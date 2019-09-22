@@ -4,14 +4,13 @@ import h5py
 import os
 
 import common_config
-from .note_numerize import NoteNumerizer
-
+from .note_normalize import normalize_note
 
 # generate a pair of input - target list from MIDI file
-def midi_to_input_target_pair(file_path, note_numerizer,
-                          sampling_frequency=common_config.SAMPLING_FREQUENCY_PREPROCESS,
-                          sliding_window_size=common_config.SLIDING_WINDOW_SIZE,
-                          silent_char=common_config.SILENT_CHAR):
+def midi_to_input_target_pair(file_path,
+                              sampling_frequency=common_config.SAMPLING_FREQUENCY_PREPROCESS,
+                              sliding_window_size=common_config.SLIDING_WINDOW_SIZE,
+                              silent_note=common_config.SILENT_NOTE):
     pretty_midi_file = pretty_midi.PrettyMIDI(file_path)
     # piano channel
     piano_midi = pretty_midi_file.instruments[0]
@@ -24,15 +23,13 @@ def midi_to_input_target_pair(file_path, note_numerizer,
     times_list = np.unique(np.where(piano_roll > 0)[1])
     indices = np.where(piano_roll > 0)
 
-    # notes_by_time[t] = array of notes played at time t
-    notes_by_time = {}
+    # note_by_time[t] = highest note played at time t
+    note_by_time = {}
     start_time = times_list[0]
     end_time = times_list[0]
     for time_idx in times_list:
         notes = indices[0][np.where(indices[1] == time_idx)]
-        note_string = ','.join(str(note) for note in notes)
-        note_numerizer.add_note_string(note_string)
-        notes_by_time[time_idx] = note_numerizer.number_by_note_string[note_string]
+        note_by_time[time_idx] = normalize_note(max(notes))
         if time_idx < start_time:
             start_time = time_idx
         if time_idx > end_time:
@@ -41,7 +38,7 @@ def midi_to_input_target_pair(file_path, note_numerizer,
     # Create the input - target pairs
     # we look at sliding_window_size each time
     # input is current window, target is the next note
-    # fill silent (empty) times with the character silent_char
+    # fill silent (empty) times with the character silent_note
     input_list = []
     target_list = []
     for idx, time_idx in enumerate(range(start_time, end_time)):
@@ -54,16 +51,16 @@ def midi_to_input_target_pair(file_path, note_numerizer,
         if idx < sliding_window_size:
             start_idx = sliding_window_size - idx - 1
             for _ in range(start_idx):
-                cur_input.append(note_numerizer.number_by_note_string[silent_char])
+                cur_input.append(silent_note)
                 is_append_target = True
 
         for i in range(start_idx, sliding_window_size):
             cur_time = time_idx - (sliding_window_size - i - 1)
-            cur_input.append(notes_by_time.get(cur_time, note_numerizer.number_by_note_string[silent_char]))
+            cur_input.append(note_by_time.get(cur_time, silent_note))
 
         # create target from next window at time_idx + 1
         # target is a 1x1 tensor
-        cur_target = [notes_by_time.get(time_idx + 1, note_numerizer.number_by_note_string[silent_char])]
+        cur_target = [note_by_time.get(time_idx + 1, silent_note)]
 
         input_list.append(cur_input)
         target_list.append(cur_target)
@@ -74,13 +71,10 @@ def midi_to_input_target_pair(file_path, note_numerizer,
 # read all MIDI files in a folder, preprocess them into inputs and targets
 # save the result to hdf5 files
 def preprocess_training_data(folder_path='midi_files',
-                          input_save_file_name=common_config.INPUT_FILE_NAME, input_dataset_key=common_config.INPUT_HDF5_KEY,
-                          target_save_file_name=common_config.TARGET_FILE_NAME, target_dataset_key=common_config.TARGET_HDF5_KEY,
-                          numerizer_file_name=common_config.NOTE_AND_NUMBER_MAPPER_FILE_NAME,
-                          silent_char=common_config.SILENT_CHAR,
-                          sliding_window_size=common_config.SLIDING_WINDOW_SIZE):
-    note_numerizer = NoteNumerizer()
-    note_numerizer.add_note_string(silent_char)
+                             input_save_file_name=common_config.INPUT_FILE_NAME, input_dataset_key=common_config.INPUT_HDF5_KEY,
+                             target_save_file_name=common_config.TARGET_FILE_NAME, target_dataset_key=common_config.TARGET_HDF5_KEY,
+                             silent_note=common_config.SILENT_NOTE,
+                             sliding_window_size=common_config.SLIDING_WINDOW_SIZE):
 
     max_dataset_size = 65536
     input_file = h5py.File(input_save_file_name, 'w')
@@ -98,7 +92,7 @@ def preprocess_training_data(folder_path='midi_files',
                 if file_count % 10 == 0:
                     print('Processed {} file'.format(file_count))
                 file_path = os.path.join(root, file)
-                cur_input_list, cur_target_list = midi_to_input_target_pair(file_path=file_path, note_numerizer=note_numerizer)
+                cur_input_list, cur_target_list = midi_to_input_target_pair(file_path=file_path)
                 for input_value, target_value in zip(cur_input_list, cur_target_list):
                     input_dataset[input_target_pair_count] = input_value
                     target_dataset[input_target_pair_count] = target_value
@@ -112,9 +106,6 @@ def preprocess_training_data(folder_path='midi_files',
 
     input_dataset.resize((input_target_pair_count, sliding_window_size))
     target_dataset.resize((input_target_pair_count, 1))
-
-    print('Saving note - number map')
-    note_numerizer.save_to_pickle(save_file_name=numerizer_file_name)
 
     input_file.close()
     target_file.close()
