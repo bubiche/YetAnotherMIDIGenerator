@@ -50,7 +50,7 @@ if __name__ == '__main__':
         elif args.generate_from_seed:
             print('Generate music from seed # {}'.format(args.generate_from_seed[0]))
             first_input = [common_config.SILENT_NOTE for i in range(common_config.SLIDING_WINDOW_SIZE - 1)]
-            first_input.append(args.generate_from_seed[0])
+            first_input.append(int(args.generate_from_seed[0]))
             weights_file_path = args.generate_from_seed[1]
             output_file_path = args.generate_from_seed[2]
 
