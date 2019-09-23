@@ -72,3 +72,5 @@ Weight files of the net trained using some of my favorite music:
 - 10 Epoch: https://drive.google.com/file/d/16cFz4SCkMhvBGZ2A7HclHMTu7TJ9Ct2P/view?usp=sharing
 
 Generated MIDI, not that good though :( : https://drive.google.com/file/d/1cQpwj40JoyYnXpmczchnxkXnVrLjyKyc/view?usp=sharing
+
+For an even lighter model + somewhat more audible results (https://drive.google.com/file/d/1Z7gQ6Yvbg30odKB2j5N-7uQqacbUf-As/view?usp=sharing ), check the branch single_note_net (https://github.com/bubiche/YetAnotherMIDIGenerator/tree/single_note_net). It's kind of cool that that one learnt my favorite music involves a lot of going up and down the scale :)
