@@ -11,7 +11,7 @@ mido==1.2.9
 numpy==1.16.4
 opt-einsum==3.0.1
 pretty-midi==0.2.8
-protobuf==3.9.1
+protobuf==3.18.3
 six==1.12.0
 tb-nightly==1.15.0a20190806
 tensorboard==1.14.0
